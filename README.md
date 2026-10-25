@@ -1,56 +1,52 @@
-# sv
+# JobHunter Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Personal job aggregation dashboard built with Svelte 5, TypeScript, Vite, Tailwind CSS 4, and Lucide icons.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Dashboard backed by real jobs and sources data
+- Searchable, filterable, sortable jobs table with a detail drawer
+- Full source CRUD, enable/disable controls, and manual XING synchronization
+- Honest unavailable states for application tracking and unsupported metrics
+- Configurable API URL, connection check, responsive navigation, and persistent theme
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## Local development
 
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-pnpm dlx sv@1.1.1 create --template minimal --types ts --install pnpm jobhunter-front
-```
-
-## Adding features
-
-Add features to your project with `sv add`:
+The NestJS backend lives in the sibling `jobhunter` directory and listens on port `3000`.
 
 ```sh
-npx sv add
+# terminal 1: backend
+cd ../jobhunter
+pnpm install
+pnpm start:dev
+
+# terminal 2: frontend
+cd ../jobhunter-front
+pnpm install
+pnpm dev
 ```
 
-For example, to add Tailwind CSS:
+Open [http://localhost:5173](http://localhost:5173). During development, requests to `/api` are proxied to `http://localhost:3000`, so no backend CORS change is needed.
+
+To use a different backend, copy `.env.example` to `.env` and set `VITE_API_BASE_URL`, or change the URL from the Settings page. For a production deployment, serve both apps behind the same origin or enable CORS on the NestJS backend.
+
+## Validation
 
 ```sh
-npx sv add tailwindcss
+pnpm check
+pnpm build
+pnpm preview
 ```
 
-## Developing
+## Supported backend surface
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- `GET /jobs`
+- `GET /jobs/:id`
+- `GET /sources`
+- `GET /sources/:id`
+- `POST /sources`
+- `PATCH /sources/:id`
+- `DELETE /sources/:id`
+- `POST /sources/:id/sync`
 
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+The current backend does not expose application persistence, read/unread job state, or an Indeed sync adapter. The UI communicates those limitations instead of creating local mock data.
